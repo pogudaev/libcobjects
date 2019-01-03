@@ -44,6 +44,7 @@ struct co_buffer{
 co_buffer *co_buffer_create_and_alloc(size_t alloc_length);
 co_status co_buffer_realloc(co_buffer *co_buffer_obj, size_t alloc_length);
 co_status co_buffer_set_alloc_length(co_buffer *co_buffer_obj, size_t alloc_length);
+co_status co_buffer_append(co_buffer *co_buffer_obj, const co_buffer *co_buffer_src);
 co_status co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t length);
 co_status co_buffer_set(co_buffer *co_buffer_obj, const void *data, size_t length);
 co_status co_buffer_get(co_buffer *co_buffer_obj, void **data, size_t *length);

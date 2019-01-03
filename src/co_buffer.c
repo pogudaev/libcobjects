@@ -38,6 +38,19 @@ static co_status _co_buffer_set_alloc_length(co_buffer *co_buffer, size_t alloc_
     return CO_OK;
 }
 
+static co_status _co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t length)
+{
+    if (length > co_buffer_obj->alloc_length - co_buffer_obj->length){
+        co_status status = _co_buffer_set_alloc_length(co_buffer_obj, length);
+        if (status < 0){
+            return status;
+        }
+    }
+    memcpy((char *) co_buffer_obj->data + co_buffer_obj->length, data, length);
+    co_buffer_obj->length += length;
+    return CO_OK;
+}
+
 CO_CREATE(co_buffer)
 {
     return co_buffer_create_and_alloc(0);
@@ -153,15 +166,7 @@ co_status co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t lengt
     if (co_buffer_obj == NULL || data == NULL){
         return CO_BAD_ARG_ERR;
     }
-    if (length > co_buffer_obj->alloc_length - co_buffer_obj->length){
-        co_status status = _co_buffer_set_alloc_length(co_buffer_obj, length);
-        if (status < 0){
-            return status;
-        }
-    }
-    memcpy((char *) co_buffer_obj->data + co_buffer_obj->length, data, length);
-    co_buffer_obj->length += length;
-    return CO_OK;
+    return _co_buffer_add(co_buffer_obj, data, length);
 }
 
 co_status co_buffer_get(co_buffer *co_buffer_obj, void **data, size_t *length)
@@ -192,4 +197,12 @@ co_buffer *co_buffer_create_and_alloc(size_t alloc_length)
         co_buffer_obj->alloc_length = alloc_length;
     }
     return co_buffer_obj;
+}
+
+co_status co_buffer_append(co_buffer *co_buffer_obj, const co_buffer *co_buffer_src)
+{
+    if (co_buffer_obj == NULL || co_buffer_src == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    return _co_buffer_add(co_buffer_obj, co_buffer_src->data, co_buffer_src->length);
 }
