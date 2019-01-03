@@ -1,0 +1,8 @@
+!.gitignore
+*.o
+*.so
+*.dll
+*.a
+*.lib
+*.user
+build/
