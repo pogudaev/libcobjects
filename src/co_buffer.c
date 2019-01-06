@@ -26,6 +26,17 @@ freely, subject to the following restrictions:
 #include <stdlib.h>
 #include <string.h>
 
+static co_status _co_buffer_realloc(co_buffer *co_buffer, size_t alloc_length)
+{
+    void *new_data = realloc(co_buffer->data, alloc_length);
+    if (new_data == NULL){
+        return CO_MEM_ALLOC_ERR;
+    }
+    co_buffer->data = new_data;
+    co_buffer->alloc_length = alloc_length;
+    return CO_OK;
+}
+
 static co_status _co_buffer_set_alloc_length(co_buffer *co_buffer, size_t alloc_length)
 {
     void *new_data = malloc(alloc_length);
@@ -41,7 +52,7 @@ static co_status _co_buffer_set_alloc_length(co_buffer *co_buffer, size_t alloc_
 static co_status _co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t length)
 {
     if (length > co_buffer_obj->alloc_length - co_buffer_obj->length){
-        co_status status = _co_buffer_set_alloc_length(co_buffer_obj, length);
+        co_status status = _co_buffer_realloc(co_buffer_obj, co_buffer_obj->length + length);
         if (status < 0){
             return status;
         }
@@ -115,17 +126,6 @@ CO_RESET(co_buffer)
     co_buffer_obj->data = new_data;
     co_buffer_obj->length = 0;
     co_buffer_obj->alloc_length = 0;
-    return CO_OK;
-}
-
-static co_status _co_buffer_realloc(co_buffer *co_buffer, size_t alloc_length)
-{
-    void *new_data = realloc(co_buffer->data, alloc_length);
-    if (new_data == NULL){
-        return CO_MEM_ALLOC_ERR;
-    }
-    co_buffer->data = new_data;
-    co_buffer->alloc_length = alloc_length;
     return CO_OK;
 }
 

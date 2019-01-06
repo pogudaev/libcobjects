@@ -9,7 +9,7 @@ set(LIB_VERSION_PATCH 0)
 option(BUILD_STATIC_LIBS "Build the static library" OFF)
 option(BUILD_SHARED_LIBS "Build the shared library" ON)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_C_COMPILER "gcc")
 
 set(LIB_VERSION_STRING ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
