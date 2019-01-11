@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "co_string.h"
 #include "co_list.h"
+#include "co_map.h"
 
 int main(void)
 {
@@ -31,6 +32,25 @@ int main(void)
     printf("%s\n", str->c_str);
 
     co_string_free(str);
+
+
+    //---
+    co_map *map = co_map_create();
+    co_map_set_type(map, char);
+
+    char q = '1';
+    co_map_set(map, "bbb", &q);
+    q = '2';
+    co_map_set(map, "aaaa", &q);
+    q = '3';
+    co_map_set(map, "ddd", &q);
+    q = '4';
+    co_map_set(map, "ccc", &q);
+
+    const char *a = (const char *) co_map_get(map, "aaaa"); //'2'
+
+    co_map_free(map);
+
 
 	return 0;
 }
