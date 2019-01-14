@@ -47,7 +47,7 @@ int main(void)
     q = '4';
     co_map_set(map, "ccc", &q);
 
-    const char *a = (const char *) co_map_get(map, "aaaa"); //'2'
+    //const char *a = (const char *) co_map_get(map, "aaaa"); //'2'
 
     co_map_free(map);
 

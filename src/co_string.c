@@ -121,6 +121,14 @@ CO_RESET(co_string)
     return CO_OK;
 }
 
+CO_COMPARE(co_string)
+{
+    if (co_string_a == NULL || co_string_b == NULL){
+        return CO_CMP_ERR;
+    }
+    return strcmp(co_string_a->c_str, co_string_b->c_str);
+}
+
 co_status co_string_set(co_string *co_string_obj, const char *str)
 {
     if (co_string_obj == NULL || str == NULL){

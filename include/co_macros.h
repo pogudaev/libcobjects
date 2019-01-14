@@ -93,6 +93,25 @@ extern "C" {
  */
 #define CO_RESET(Object) co_status Object##_reset(Object * Object##_obj)
 
+
+#define CO_CMP_LT -1 //меньше
+#define CO_CMP_GT 1 //больше
+#define CO_CMP_EQ 0 //равно
+#define CO_CMP_NE 2 //не равно
+#define CO_CMP_ERR 3 //ошибка
+
+/**
+ * @brief int Object_compare(const Object * Object_a, const Object * Object_b)
+ * @param Object_a указатель на первый сравниваемый объект
+ * @param Object_b указатель на второй сравниваемый объект
+ * @return если Object_a < Object_b, то CO_CMP_LT.
+ *         если Object_a > Object_b, то CO_CMP_GT.
+ *         если Object_a == Object_b, то CO_CMP_EQ.
+ *         если Object_a != Object_b, но нельзя определить какой больше то CO_CMP_NE.
+ *         если при сравнении произошла ошибка или сравнить невозможно то CO_CMP_ERR.
+ */
+#define CO_COMPARE(Object) int Object##_compare(const Object * Object##_a, const Object * Object##_b)
+
 /**
  * @brief CO_OBJECT_DEFINITION Объявление методов необходимых для любого объекта библиотеки
  */
@@ -103,7 +122,8 @@ extern "C" {
     CO_CREATE(Object); \
     CO_CLONE(Object); \
     CO_COPY(Object); \
-    CO_RESET(Object)
+    CO_RESET(Object); \
+    CO_COMPARE(Object);
 
 
 //========================== Для контейнеров ==============================

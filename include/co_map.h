@@ -29,6 +29,10 @@ freely, subject to the following restrictions:
 #include "co_status_code.h"
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 CO_OBJECT_DEFINITION(co_map);
 CO_CONTAINER_DEFINITION(co_map);
 
@@ -57,5 +61,9 @@ struct co_map {
 
 co_status co_map_set(co_map *co_map_obj, const char *key, const void *object);
 const void *co_map_get(co_map *co_map_obj, const char *key);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CO_MAP_H
