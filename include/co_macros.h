@@ -29,33 +29,56 @@ freely, subject to the following restrictions:
 extern "C" {
 #endif
 
+#define CO_CMP_LT -1 //меньше
+#define CO_CMP_GT 1 //больше
+#define CO_CMP_EQ 0 //равно
+#define CO_CMP_NE 2 //не равно
+#define CO_CMP_ERR 3 //ошибка
+
 //для примитивных типов
 
 #define CO_PRIMITIVE_CLONE_DEF(Primitive) \
     Primitive *Primitive##_clone(const Primitive *value) \
     { \
+        if (value == NULL) return NULL; \
         Primitive *ret = (Primitive *) malloc(sizeof(Primitive)); \
         if (ret == NULL) return NULL; \
         memcpy(ret, value, sizeof(Primitive)); \
         return ret; \
     }
 
-#define CO_PRIMITIVE_FREE_DEF(Primitive) void Primitive##_free(Primitive *value){free(value);}
+#define CO_PRIMITIVE_FREE_DEF(Primitive) \
+    void Primitive##_free(Primitive *value){ \
+        if (value){ \
+            free(value); \
+        } \
+    }
+
+#define CO_PRIMITIVE_COMPARE_DEF(Primitive) \
+    int Primitive##_compare(const Primitive *value_a, const Primitive *value_b){ \
+        if (value_a == NULL || value_b == NULL){ \
+            return CO_CMP_ERR; \
+        } \
+        if (*value_a < *value_b) return CO_CMP_LT; \
+        else if (*value_b > *value_a) return CO_CMP_GT; \
+        return CO_CMP_EQ; \
+    }
 
 #define CO_PRIMITIVE_CLONE_DECL(Primitive) Primitive *Primitive##_clone(const Primitive *value)
 
 #define CO_PRIMITIVE_FREE_DECL(Primitive) void Primitive##_free(Primitive *value)
 
-
+#define CO_PRIMITIVE_COMPARE_DECL(Primitive) int Primitive##_compare(const Primitive *value_a, const Primitive *value_b)
 
 #define CO_PRIMITIVE_DEFINITION(Primitive) \
     CO_PRIMITIVE_CLONE_DEF(Primitive) \
-    CO_PRIMITIVE_FREE_DEF(Primitive)
+    CO_PRIMITIVE_FREE_DEF(Primitive) \
+    CO_PRIMITIVE_COMPARE_DEF(Primitive)
 
 #define CO_PRIMITIVE_DECLARATION(Primitive) \
     CO_PRIMITIVE_CLONE_DECL(Primitive); \
-    CO_PRIMITIVE_FREE_DECL(Primitive)
-
+    CO_PRIMITIVE_FREE_DECL(Primitive); \
+    CO_PRIMITIVE_COMPARE_DECL(Primitive);
 
 //Для всех объектов
 
@@ -92,13 +115,6 @@ extern "C" {
  * @return CO_OK в случае успеха, или код ошибки
  */
 #define CO_RESET(Object) co_status Object##_reset(Object * Object##_obj)
-
-
-#define CO_CMP_LT -1 //меньше
-#define CO_CMP_GT 1 //больше
-#define CO_CMP_EQ 0 //равно
-#define CO_CMP_NE 2 //не равно
-#define CO_CMP_ERR 3 //ошибка
 
 /**
  * @brief int Object_compare(const Object * Object_a, const Object * Object_b)

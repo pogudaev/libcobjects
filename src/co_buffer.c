@@ -129,6 +129,19 @@ CO_RESET(co_buffer)
     return CO_OK;
 }
 
+CO_COMPARE(co_buffer){
+    if (co_buffer_a == NULL || co_buffer_b == NULL){
+        return CO_CMP_ERR;
+    }
+    size_t compare_length = (co_buffer_a->length < co_buffer_b->length)?co_buffer_a->length:co_buffer_b->length;
+    int compare_result = memcmp(co_buffer_a->data, co_buffer_b->data, compare_length);
+    if (compare_result == 0){
+        if (co_buffer_a->length < co_buffer_b->length) compare_result = CO_CMP_LT;
+        else if (co_buffer_a->length > co_buffer_b->length) compare_result = CO_CMP_GT;
+    }
+    return compare_result;
+}
+
 co_status co_buffer_realloc(co_buffer *co_buffer_obj, size_t alloc_length)
 {
     if (co_buffer_obj == NULL){
