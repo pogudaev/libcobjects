@@ -60,7 +60,7 @@ extern "C" {
             return CO_CMP_ERR; \
         } \
         if (*value_a < *value_b) return CO_CMP_LT; \
-        else if (*value_b > *value_a) return CO_CMP_GT; \
+        else if (*value_a > *value_b) return CO_CMP_GT; \
         return CO_CMP_EQ; \
     }
 
@@ -161,6 +161,7 @@ extern "C" {
 #define CO_CONTAINER_DEFINITION(Object) \
     typedef void (*co_free_function)(void *); \
     typedef void * (*co_clone_function)(const void *); \
+    typedef int (*co_compare_function)(const void *, const void *); \
     CO_CLEAR(Object); \
     CO_SIZE(Object)
 

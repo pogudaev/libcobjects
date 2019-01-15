@@ -172,6 +172,33 @@ CO_RESET(co_list)
     return status;
 }
 
+CO_COMPARE(co_list)
+{
+    if (co_list_a == NULL || co_list_b == NULL){
+        return CO_CMP_ERR;
+    }
+    if (co_list_a->compare_function != co_list_b->compare_function){
+        return CO_CMP_ERR;
+    }
+    co_list_iterator iter_a = co_list_a->head;
+    co_list_iterator iter_b = co_list_b->head;
+    while(iter_a != NULL && iter_b != NULL){
+        int compare_result = co_list_a->compare_function(iter_a->data, iter_b->data);
+        if (compare_result == CO_CMP_ERR){
+            return CO_CMP_ERR;
+        }
+        else if (compare_result != CO_CMP_EQ){
+            return CO_CMP_NE;
+        }
+        iter_a = iter_a->next;
+        iter_b = iter_b->next;
+    }
+    if (iter_a != NULL || iter_b != NULL){
+        return CO_CMP_NE;
+    }
+    return CO_CMP_EQ;
+}
+
 CO_CLEAR(co_list)
 {
     if (co_list_obj == NULL){
@@ -338,4 +365,28 @@ co_list *co_string_split_to_list(const co_string *co_string_obj, const char *div
     }
     free(new_str);
     return co_list_obj;
+}
+
+co_status co_list_remove_by_value(co_list *co_list_obj, const void *object)
+{
+    return co_list_remove_by_cond(co_list_obj, object, co_list_obj->compare_function);
+}
+
+co_status co_list_remove_by_cond(co_list *co_list_obj, const void *data, co_compare_function compare_function)
+{
+    if (co_list_obj == NULL || data == NULL || compare_function == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    co_list_iterator *iter = &(co_list_obj->head);
+    while(*iter){
+        if (compare_function((*iter)->data, data) == CO_CMP_EQ){
+            co_list_iterator rem = *iter;
+            *iter = (*iter)->next;
+            co_list_obj->free_function(rem->data);
+            free(rem);
+            continue;
+        }
+        iter = &((*iter)->next);
+    }
+    return CO_OK;
 }

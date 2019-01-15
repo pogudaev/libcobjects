@@ -50,17 +50,22 @@ struct co_map {
     co_map_iterator head;
     co_free_function free_function; //Функция для удаления элемента
     co_clone_function clone_function; //Функция для клонирования элемента
+    co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_map_set_type(map, object) \
     map->free_function = (co_free_function) object##_free; \
-    map->clone_function = (co_clone_function) object##_clone
+    map->clone_function = (co_clone_function) object##_clone; \
+    map->compare_function = (co_compare_function) object##_compare
 
 #define co_map_foreach(map, iterator) \
     for (co_map_iterator iterator = map->head; iterator; iterator = iterator->next)
 
 co_status co_map_set(co_map *co_map_obj, const char *key, const void *object);
 const void *co_map_get(co_map *co_map_obj, const char *key);
+co_status co_map_remove_by_value(co_map *co_map_obj, const void *object);
+co_status co_map_remove_by_key(co_map *co_map_obj, const char *key);
+co_status co_map_remove_by_cond(co_map *co_map_obj, const void *data, co_compare_function compare_function);
 
 #ifdef __cplusplus
 }

@@ -44,6 +44,10 @@ int main(void)
     co_map_set(map, "aaaa", &q);
     q = '3';
     co_map_set(map, "ddd", &q);
+
+    char w = '2';
+    co_map_remove_by_value(map, &w);
+
     q = '4';
     co_map_set(map, "ccc", &q);
 

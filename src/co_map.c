@@ -155,6 +155,36 @@ CO_RESET(co_map)
     return status;
 }
 
+CO_COMPARE(co_map)
+{
+    if (co_map_a == NULL || co_map_b == NULL){
+        return CO_CMP_ERR;
+    }
+    if (co_map_a->compare_function != co_map_b->compare_function){
+        return CO_CMP_ERR;
+    }
+    co_map_iterator iter_a = co_map_a->head;
+    co_map_iterator iter_b = co_map_b->head;
+    while(iter_a != NULL && iter_b != NULL){
+        if (strcmp(iter_a->key, iter_b->key) != 0){
+            return CO_CMP_NE;
+        }
+        int compare_result = co_map_a->compare_function(iter_a->data, iter_b->data);
+        if (compare_result == CO_CMP_ERR){
+            return CO_CMP_ERR;
+        }
+        else if (compare_result != CO_CMP_EQ){
+            return CO_CMP_NE;
+        }
+        iter_a = iter_a->next;
+        iter_b = iter_b->next;
+    }
+    if (iter_a != NULL || iter_b != NULL){
+        return CO_CMP_NE;
+    }
+    return CO_CMP_EQ;
+}
+
 CO_CLEAR(co_map)
 {
     if (co_map_obj == NULL){
@@ -233,4 +263,50 @@ const void *co_map_get(co_map *co_map_obj, const char *key)
         }
     }
     return NULL;
+}
+
+co_status co_map_remove_by_value(co_map *co_map_obj, const void *object)
+{
+    return co_map_remove_by_cond(co_map_obj, object, co_map_obj->compare_function);
+}
+
+
+co_status co_map_remove_by_key(co_map *co_map_obj, const char *key)
+{
+    if (co_map_obj == NULL || key == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    co_map_iterator *iter = &(co_map_obj->head);
+    while(*iter){
+        if (strcmp((*iter)->key, key) == 0){
+            co_map_iterator rem = *iter;
+            *iter = (*iter)->next;
+            co_map_obj->free_function(rem->data);
+            free(rem->key);
+            free(rem);
+            continue;
+        }
+        iter = &((*iter)->next);
+    }
+    return CO_OK;
+}
+
+co_status co_map_remove_by_cond(co_map *co_map_obj, const void *data, co_compare_function compare_function)
+{
+    if (co_map_obj == NULL || data == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    co_map_iterator *iter = &(co_map_obj->head);
+    while(*iter){
+        if (compare_function((*iter)->data, data) == CO_CMP_EQ){
+            co_map_iterator rem = *iter;
+            *iter = (*iter)->next;
+            co_map_obj->free_function(rem->data);
+            free(rem->key);
+            free(rem);
+            continue;
+        }
+        iter = &((*iter)->next);
+    }
+    return CO_OK;
 }

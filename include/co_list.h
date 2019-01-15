@@ -51,14 +51,20 @@ struct co_list{
     co_list_iterator head; //начало списка
     co_free_function free_function; //Функция для удаления элемента
     co_clone_function clone_function; //Функция для клонирования элемента
+    co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_list_set_type(list, object) \
     list->free_function = (co_free_function) object##_free; \
-    list->clone_function = (co_clone_function) object##_clone
+    list->clone_function = (co_clone_function) object##_clone; \
+    list->compare_function = (co_compare_function) object##_compare
+
 
 #define co_list_foreach(list, iterator) \
     for (co_list_iterator iterator = list->head; iterator; iterator = iterator->next)
+
+co_status co_list_remove_by_value(co_list *co_list_obj, const void *object);
+co_status co_list_remove_by_cond(co_list *co_list_obj, const void *data, co_compare_function compare_function);
 
 typedef struct co_string co_string; //чтобы не создать циклическую зависимость #include
 co_list *co_string_split_to_list(const co_string *co_string_obj, const char *divider);
