@@ -87,7 +87,6 @@ CO_FREE(co_map)
     }
 }
 
-
 CO_CLONE(co_map)
 {
     if (co_map_src == NULL){
@@ -269,7 +268,6 @@ co_status co_map_remove_by_value(co_map *co_map_obj, const void *object)
 {
     return co_map_remove_by_cond(co_map_obj, object, co_map_obj->compare_function);
 }
-
 
 co_status co_map_remove_by_key(co_map *co_map_obj, const char *key)
 {
