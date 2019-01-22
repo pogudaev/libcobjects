@@ -55,6 +55,19 @@ int main(void)
 
     co_map_free(map);
 
+    //---
+
+    co_string *str2 = co_string_create_with_allocate(100);
+
+    co_string_set(str2, "234234234234234234234234234");
+
+    co_string_set(str2, "test");
+
+    const char *qwwww = "qwertyuiopasdfghjkl";
+
+    co_string_add_substr(str2, qwwww + 4, 3);
+
+    printf("%s\n", str2->c_str);
 
 	return 0;
 }

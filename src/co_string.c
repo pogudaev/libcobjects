@@ -169,6 +169,21 @@ co_string *co_string_create_from_c_str(const char *str)
     return co_string_obj;
 }
 
+co_string *co_string_create_with_allocate(size_t max_str_length)
+{
+    co_string * co_string_obj = (co_string *) malloc(sizeof(co_string));
+    if (co_string_obj){
+        co_string_obj->c_str = (char *) malloc(max_str_length + 1);
+        if (co_string_obj->c_str == NULL){
+            free(co_string_obj);
+            return NULL;
+        }
+        co_string_obj->length = 0;
+        co_string_obj->alloc_length = max_str_length + 1;
+    }
+    return co_string_obj;
+}
+
 co_status co_string_add(co_string *co_string_obj, const char *str)
 {
     if (co_string_obj == NULL || str == NULL){
@@ -183,6 +198,24 @@ co_status co_string_add(co_string *co_string_obj, const char *str)
         }
     }
     memcpy(co_string_obj->c_str + co_string_obj->length, str, str_length + 1);
+    co_string_obj->length = new_length;
+    return CO_OK;
+}
+
+co_status co_string_add_substr(co_string *co_string_obj, const char *begin, size_t length)
+{
+    if (co_string_obj == NULL || begin == NULL || strnlen(begin, length) < length){
+        return CO_BAD_ARG_ERR;
+    }
+    size_t new_length = co_string_obj->length + length;
+    if (new_length + 1 > co_string_obj->alloc_length){
+        co_status status = _co_string_realloc(co_string_obj, new_length + 1);
+        if (status != CO_OK){
+            return status;
+        }
+    }
+    memcpy(co_string_obj->c_str + co_string_obj->length, begin, length);
+    co_string_obj->c_str[co_string_obj->length + length] = '\0';
     co_string_obj->length = new_length;
     return CO_OK;
 }
@@ -254,4 +287,3 @@ co_status co_string_sprintf(co_string *co_string_obj, const char *format, ...)
     co_string_obj->alloc_length = (size_t) length + 1;
     return CO_OK;
 }
-

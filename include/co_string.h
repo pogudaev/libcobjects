@@ -42,8 +42,10 @@ struct co_string{
 };
 
 co_string *co_string_create_from_c_str(const char *str);
+co_string *co_string_create_with_allocate(size_t max_str_length);
 co_status co_string_set(co_string *co_string_obj, const char *str);
 co_status co_string_add(co_string *co_string_obj, const char *str);
+co_status co_string_add_substr(co_string *co_string_obj, const char *begin, size_t length);
 co_status co_string_append(co_string *co_string_obj, const co_string *co_string_src);
 co_status co_string_crop(co_string *co_string_obj, size_t begin, size_t end);
 
