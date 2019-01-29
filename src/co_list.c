@@ -127,6 +127,7 @@ CO_CLONE(co_list)
             }
             if (prev_iter) prev_iter->next = (*iter);
             prev_iter = (*iter);
+            iter = &prev_iter->next;
             iter_src = iter_src->next;
         }
     }
@@ -151,6 +152,7 @@ CO_COPY(co_list)
         }
         if (prev_iter) prev_iter->next = (*iter);
         prev_iter = (*iter);
+        iter = &prev_iter->next;
         iter_src = iter_src->next;
     }
 
