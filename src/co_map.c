@@ -75,6 +75,7 @@ CO_CREATE(co_map)
         co_map_obj->head = NULL;
         co_map_obj->free_function = NULL;
         co_map_obj->clone_function = NULL;
+        co_map_obj->compare_function = NULL;
     }
     return co_map_obj;
 }
@@ -97,6 +98,7 @@ CO_CLONE(co_map)
         co_map_obj->head = NULL;
         co_map_obj->free_function = co_map_src->free_function;
         co_map_obj->clone_function = co_map_src->clone_function;
+        co_map_obj->compare_function = co_map_src->compare_function;
         co_map_iterator iter_src = co_map_src->head;
         co_map_iterator *iter = &co_map_obj->head;
         co_map_iterator prev_iter = NULL; //предыдущий элемент списка
@@ -140,6 +142,7 @@ CO_COPY(co_map)
     co_map_dst->head = new_head;
     co_map_dst->free_function = co_map_src->free_function;
     co_map_dst->clone_function = co_map_src->clone_function;
+    co_map_dst->compare_function = co_map_src->compare_function;
     return CO_OK;
 }
 
@@ -151,6 +154,7 @@ CO_RESET(co_map)
     co_status status = _co_map_clear(co_map_obj);
     co_map_obj->free_function = NULL;
     co_map_obj->clone_function = NULL;
+    co_map_obj->compare_function = NULL;
     return status;
 }
 

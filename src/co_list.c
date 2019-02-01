@@ -93,6 +93,7 @@ CO_CREATE(co_list)
         co_list_obj->head = NULL;
         co_list_obj->free_function = NULL;
         co_list_obj->clone_function = NULL;
+        co_list_obj->compare_function = NULL;
     }
     return co_list_obj;
 }
@@ -115,6 +116,7 @@ CO_CLONE(co_list)
         co_list_obj->head = NULL;
         co_list_obj->free_function = co_list_src->free_function;
         co_list_obj->clone_function = co_list_src->clone_function;
+        co_list_obj->compare_function = co_list_src->compare_function;
         co_list_iterator iter_src = co_list_src->head;
         co_list_iterator *iter = &co_list_obj->head;
         co_list_iterator prev_iter = NULL; //предыдущий элемент списка
@@ -160,6 +162,7 @@ CO_COPY(co_list)
     co_list_dst->head = new_head;
     co_list_dst->free_function = co_list_src->free_function;
     co_list_dst->clone_function = co_list_src->clone_function;
+    co_list_dst->compare_function = co_list_src->compare_function;
     return CO_OK;
 }
 
@@ -171,6 +174,7 @@ CO_RESET(co_list)
     co_status status = _co_list_clear(co_list_obj);
     co_list_obj->free_function = NULL;
     co_list_obj->clone_function = NULL;
+    co_list_obj->compare_function = NULL;
     return status;
 }
 
@@ -392,3 +396,51 @@ co_status co_list_remove_by_cond(co_list *co_list_obj, const void *data, co_comp
     }
     return CO_OK;
 }
+
+co_status co_list_concat_move_back(co_list *co_list_dst, co_list *co_list_src)
+{
+    if (co_list_dst == NULL || co_list_src == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    co_list_iterator *iter = &(co_list_dst->head);
+    while(*iter) iter = &((*iter)->next);
+    *iter = co_list_src->head;
+    co_list_src->head = NULL;
+    co_list_free(co_list_src);
+    return CO_OK;
+}
+
+co_status co_list_concat_move_front(co_list *co_list_dst, co_list *co_list_src)
+{
+    if (co_list_dst == NULL || co_list_src == NULL){
+        return CO_BAD_ARG_ERR;
+    }
+    co_list_iterator *iter = &(co_list_src->head);
+    while(*iter) iter = &((*iter)->next);
+    *iter = co_list_dst->head;
+    co_list_dst->head = co_list_src->head;
+    co_list_src->head = NULL;
+    co_list_free(co_list_src);
+    return CO_OK;
+}
+
+bool co_list_check_by_cond(const co_list *co_list_obj, const void *data, co_compare_function compare_function)
+{
+    if (co_list_obj == NULL || data == NULL || compare_function == NULL){
+        return false;
+    }
+    co_list_iterator iter = co_list_obj->head;
+    while(iter){
+        if (compare_function(iter->data, data) == CO_CMP_EQ){
+            return true;
+        }
+        iter = iter->next;
+    }
+    return false;
+}
+
+bool co_list_check_by_value(const co_list *co_list_obj, const void *object)
+{
+    return co_list_check_by_cond(co_list_obj, object, co_list_obj->compare_function);
+}
+

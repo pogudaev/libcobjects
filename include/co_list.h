@@ -26,6 +26,7 @@ freely, subject to the following restrictions:
 #define CO_LIST_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "co_macros.h"
 #include "co_status_code.h"
@@ -63,6 +64,10 @@ struct co_list{
 #define co_list_foreach(list, iterator) \
     for (co_list_iterator iterator = list->head; iterator; iterator = iterator->next)
 
+co_status co_list_concat_move_back(co_list *co_list_dst, co_list *co_list_src);
+co_status co_list_concat_move_front(co_list *co_list_dst, co_list *co_list_src);
+bool co_list_check_by_value(const co_list *co_list_obj, const void *object);
+bool co_list_check_by_cond(const co_list *co_list_obj, const void *data, co_compare_function compare_function);
 co_status co_list_remove_by_value(co_list *co_list_obj, const void *object);
 co_status co_list_remove_by_cond(co_list *co_list_obj, const void *data, co_compare_function compare_function);
 
