@@ -20,6 +20,7 @@ set(SOURCE_LIB
 	"${CMAKE_SOURCE_DIR}/src/co_primitives.c"
 	"${CMAKE_SOURCE_DIR}/src/co_string.c"
         "${CMAKE_SOURCE_DIR}/src/co_map.c"
+        "${CMAKE_SOURCE_DIR}/src/co_vector.c"
 )
 
 set(PUBLIC_HEADERS 
@@ -30,6 +31,7 @@ set(PUBLIC_HEADERS
 	"${CMAKE_SOURCE_DIR}/include/co_status_code.h"
 	"${CMAKE_SOURCE_DIR}/include/co_string.h"
         "${CMAKE_SOURCE_DIR}/include/co_map.h"
+        "${CMAKE_SOURCE_DIR}/include/co_vector.h"
 )
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/include)

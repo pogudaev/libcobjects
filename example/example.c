@@ -2,6 +2,7 @@
 #include "co_string.h"
 #include "co_list.h"
 #include "co_map.h"
+#include "co_vector.h"
 
 int main(void)
 {
@@ -68,6 +69,26 @@ int main(void)
     co_string_add_substr(str2, qwwww + 4, 3);
 
     printf("%s\n", str2->c_str);
+
+    printf("----------------------------\n");
+
+    co_vector *vector = co_vector_create();
+    co_vector_set_type(vector, co_string);
+
+    co_string *string1 = co_string_create_from_c_str("test1");
+    co_string *string2 = co_string_create_from_c_str("test2");
+    co_string *string3 = co_string_create_from_c_str("test3");
+
+
+    co_vector_push_back(vector, string1);
+
+    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
+    co_vector_push_back(vector, string2);
+
+    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
+    co_vector_push_back(vector, string3);
+
+    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
 
 	return 0;
 }
