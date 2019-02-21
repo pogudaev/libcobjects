@@ -60,7 +60,6 @@ struct co_list{
     list->clone_function = (co_clone_function) object##_clone; \
     list->compare_function = (co_compare_function) object##_compare
 
-
 #define co_list_foreach(list, iterator) \
     for (co_list_iterator iterator = list->head; iterator; iterator = iterator->next)
 

@@ -37,6 +37,10 @@ extern "C" {
 
 //для примитивных типов
 
+typedef void (*co_free_function)(void *);
+typedef void * (*co_clone_function)(const void *);
+typedef int (*co_compare_function)(const void *, const void *);
+
 #define CO_PRIMITIVE_CLONE_DEF(Primitive) \
     Primitive *Primitive##_clone(const Primitive *value) \
     { \
@@ -78,7 +82,7 @@ extern "C" {
 #define CO_PRIMITIVE_DECLARATION(Primitive) \
     CO_PRIMITIVE_CLONE_DECL(Primitive); \
     CO_PRIMITIVE_FREE_DECL(Primitive); \
-    CO_PRIMITIVE_COMPARE_DECL(Primitive);
+    CO_PRIMITIVE_COMPARE_DECL(Primitive)
 
 //Для всех объектов
 
@@ -139,7 +143,7 @@ extern "C" {
     CO_CLONE(Object); \
     CO_COPY(Object); \
     CO_RESET(Object); \
-    CO_COMPARE(Object);
+    CO_COMPARE(Object)
 
 
 //========================== Для контейнеров ==============================
@@ -159,9 +163,6 @@ extern "C" {
 #define CO_SIZE(Object) size_t Object##_size(const Object *Object##_obj)
 
 #define CO_CONTAINER_DEFINITION(Object) \
-    typedef void (*co_free_function)(void *); \
-    typedef void * (*co_clone_function)(const void *); \
-    typedef int (*co_compare_function)(const void *, const void *); \
     CO_CLEAR(Object); \
     CO_SIZE(Object)
 
