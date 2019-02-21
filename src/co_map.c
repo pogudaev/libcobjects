@@ -198,6 +198,9 @@ CO_CLEAR(co_map)
 
 CO_SIZE(co_map)
 {
+    if (co_map_obj == NULL){
+        return 0;
+    }
     co_map_iterator iter = co_map_obj->head;
     size_t counter = 0;
     while (iter) {

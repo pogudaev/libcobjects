@@ -251,6 +251,9 @@ CO_FRONT(co_list)
 
 CO_SIZE(co_list)
 {
+    if (co_list_obj == NULL){
+        return 0;
+    }
     co_list_iterator iter = co_list_obj->head;
     size_t counter = 0;
     while (iter) {
