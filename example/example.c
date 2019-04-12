@@ -75,20 +75,26 @@ int main(void)
     co_vector *vector = co_vector_create();
     co_vector_set_type(vector, co_string);
 
-    co_string *string1 = co_string_create_from_c_str("test1");
-    co_string *string2 = co_string_create_from_c_str("test2");
-    co_string *string3 = co_string_create_from_c_str("test3");
 
+    for (int i = 0; i < 100; i++){
+        char buff[30];
+        sprintf(buff, "test_%d", i);
+        co_string *str = co_string_create_from_c_str(buff);
+        if (i%2 == 0){
+            co_vector_push_front(vector, str);
+        }
+        else{
+            co_vector_push_back(vector, str);
+        }
+        co_string_free(str);
+    }
 
-    co_vector_push_back(vector, string1);
-
-    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
-    co_vector_push_back(vector, string2);
-
-    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
-    co_vector_push_back(vector, string3);
-
-    printf("%s\n", ((const co_string *) co_vector_back(vector))->c_str);
+    do{
+        const co_string *co_str = (const co_string *) co_vector_back(vector);
+        if (co_str)
+            printf("%s\n", co_str->c_str);
+    }
+    while(co_vector_pop_back(vector) != CO_IMPOSIBLE_OPERATION_ERR);
 
 	return 0;
 }
