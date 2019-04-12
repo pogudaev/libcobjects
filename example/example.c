@@ -81,12 +81,11 @@ int main(void)
         sprintf(buff, "test_%d", i);
         co_string *str = co_string_create_from_c_str(buff);
         if (i%2 == 0){
-            co_vector_push_front(vector, str);
+            co_vector_move_front(vector, str);
         }
         else{
-            co_vector_push_back(vector, str);
+            co_vector_move_back(vector, str);
         }
-        co_string_free(str);
     }
 
     do{

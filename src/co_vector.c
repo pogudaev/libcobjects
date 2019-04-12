@@ -26,9 +26,24 @@ freely, subject to the following restrictions:
 #include <stdlib.h>
 #include <string.h>
 
-
 #define CO_VECTOR_PRE_ALLOC 5
 #define CO_VECTOR_POST_ALLOC 5
+
+static co_status _co_vector_add_first(co_vector *co_vector_obj, void *data, bool move) //data удаляется в этой функции
+{
+    size_t raw_data_size = co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + CO_VECTOR_POST_ALLOC + 1);
+    co_vector_obj->raw_data = malloc(raw_data_size);
+    if (co_vector_obj->raw_data == NULL){
+        if (move) co_vector_obj->free_function(data);
+        return CO_MEM_ALLOC_ERR;
+    }
+    co_vector_obj->length = 1;
+    co_vector_obj->raw_data_size = raw_data_size;
+    co_vector_obj->begin_item_shift = CO_VECTOR_PRE_ALLOC;
+    memcpy((char *) co_vector_obj->raw_data + (co_vector_obj->item_size * CO_VECTOR_PRE_ALLOC), data, co_vector_obj->item_size);
+    free(data);
+    return CO_OK;
+}
 
 CO_CREATE(co_vector)
 {
@@ -147,23 +162,6 @@ CO_SIZE(co_vector)
     return co_vector_obj->length;
 }
 
-
-static co_status _co_vector_add_first(co_vector *co_vector_obj, void *data) //data удаляется в этой функции
-{
-    size_t raw_data_size = co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + CO_VECTOR_POST_ALLOC + 1);
-    co_vector_obj->raw_data = malloc(raw_data_size);
-    if (co_vector_obj->raw_data == NULL){
-        co_vector_obj->free_function(data);
-        return CO_MEM_ALLOC_ERR;
-    }
-    co_vector_obj->length = 1;
-    co_vector_obj->raw_data_size = raw_data_size;
-    co_vector_obj->begin_item_shift = CO_VECTOR_PRE_ALLOC;
-    memcpy((char *) co_vector_obj->raw_data + (co_vector_obj->item_size * CO_VECTOR_PRE_ALLOC), data, co_vector_obj->item_size);
-    free(data);
-    return CO_OK;
-}
-
 CO_PUSH_BACK(co_vector)
 {
     if (co_vector_obj == NULL || object == NULL || co_vector_obj->item_size == 0){
@@ -174,7 +172,7 @@ CO_PUSH_BACK(co_vector)
         return CO_MEM_ALLOC_ERR;
     }
     if (co_vector_obj->raw_data == NULL){
-        return _co_vector_add_first(co_vector_obj, data);
+        return _co_vector_add_first(co_vector_obj, data, false);
     }
     else {
         size_t byte_shift = (co_vector_obj->begin_item_shift + co_vector_obj->length) * co_vector_obj->item_size;
@@ -203,6 +201,45 @@ CO_PUSH_BACK(co_vector)
             co_vector_obj->length++;
             memcpy((char *) co_vector_obj->raw_data + byte_shift, data, co_vector_obj->item_size);
             free(data);
+            return CO_OK;
+        }
+    }
+}
+
+CO_MOVE_BACK(co_vector)
+{
+    if (co_vector_obj == NULL || object == NULL || co_vector_obj->item_size == 0){
+        return CO_BAD_ARG_ERR;
+    }
+    if (co_vector_obj->raw_data == NULL){
+        return _co_vector_add_first(co_vector_obj, object, true);
+    }
+    else {
+        size_t byte_shift = (co_vector_obj->begin_item_shift + co_vector_obj->length) * co_vector_obj->item_size;
+        if (byte_shift + co_vector_obj->item_size > co_vector_obj->raw_data_size){
+            //необходима реаллокация
+            size_t raw_data_size = co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + CO_VECTOR_POST_ALLOC + co_vector_obj->length + 1);
+            void *new_raw_data = malloc(raw_data_size);
+            if (new_raw_data == NULL){
+                return CO_MEM_ALLOC_ERR;
+            }
+            memcpy((char *) new_raw_data + (co_vector_obj->item_size * CO_VECTOR_PRE_ALLOC),
+                   (char *) co_vector_obj->raw_data + (co_vector_obj->item_size * co_vector_obj->begin_item_shift),
+                   co_vector_obj->item_size * co_vector_obj->length);
+            memcpy((char *) new_raw_data + (co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + co_vector_obj->length)), object, co_vector_obj->item_size);
+            free(object);
+            free(co_vector_obj->raw_data);
+            co_vector_obj->raw_data = new_raw_data;
+            co_vector_obj->raw_data_size = raw_data_size;
+            co_vector_obj->length++;
+            co_vector_obj->begin_item_shift = CO_VECTOR_PRE_ALLOC;
+            return CO_OK;
+        }
+        else{
+            //нет нужды в реаллокации
+            co_vector_obj->length++;
+            memcpy((char *) co_vector_obj->raw_data + byte_shift, object, co_vector_obj->item_size);
+            free(object);
             return CO_OK;
         }
     }
@@ -242,7 +279,7 @@ CO_PUSH_FRONT(co_vector)
         return CO_MEM_ALLOC_ERR;
     }
     if (co_vector_obj->raw_data == NULL){
-        return _co_vector_add_first(co_vector_obj, data);
+        return _co_vector_add_first(co_vector_obj, data, false);
     }
     else {
         if (co_vector_obj->begin_item_shift == 0){
@@ -271,6 +308,45 @@ CO_PUSH_FRONT(co_vector)
             co_vector_obj->begin_item_shift--;
             memcpy((char *) co_vector_obj->raw_data + ((co_vector_obj->begin_item_shift) * co_vector_obj->item_size), data, co_vector_obj->item_size);
             free(data);
+            return CO_OK;
+        }
+    }
+}
+
+CO_MOVE_FRONT(co_vector)
+{
+    if (co_vector_obj == NULL || object == NULL || co_vector_obj->item_size == 0){
+        return CO_BAD_ARG_ERR;
+    }
+    if (co_vector_obj->raw_data == NULL){
+        return _co_vector_add_first(co_vector_obj, object, true);
+    }
+    else {
+        if (co_vector_obj->begin_item_shift == 0){
+            //необходима реаллокация
+            size_t raw_data_size = co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + CO_VECTOR_POST_ALLOC + co_vector_obj->length + 1);
+            void *new_raw_data = malloc(raw_data_size);
+            if (new_raw_data == NULL){
+                return CO_MEM_ALLOC_ERR;
+            }
+            memcpy((char *) new_raw_data + (co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC + 1)),
+                   (char *) co_vector_obj->raw_data + (co_vector_obj->item_size * co_vector_obj->begin_item_shift),
+                   co_vector_obj->item_size * co_vector_obj->length);
+            memcpy((char *) new_raw_data + (co_vector_obj->item_size * (CO_VECTOR_PRE_ALLOC)), object, co_vector_obj->item_size);
+            free(object);
+            free(co_vector_obj->raw_data);
+            co_vector_obj->raw_data = new_raw_data;
+            co_vector_obj->raw_data_size = raw_data_size;
+            co_vector_obj->length++;
+            co_vector_obj->begin_item_shift = CO_VECTOR_PRE_ALLOC;
+            return CO_OK;
+        }
+        else{
+            //нет нужды в реаллокации
+            co_vector_obj->length++;
+            co_vector_obj->begin_item_shift--;
+            memcpy((char *) co_vector_obj->raw_data + ((co_vector_obj->begin_item_shift) * co_vector_obj->item_size), object, co_vector_obj->item_size);
+            free(object);
             return CO_OK;
         }
     }
