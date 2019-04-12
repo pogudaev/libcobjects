@@ -141,6 +141,25 @@ CO_RESET(co_vector)
     return CO_OK;
 }
 
+CO_COMPARE(co_vector)
+{
+    if (co_vector_a == NULL || co_vector_b == NULL){
+        return CO_CMP_ERR;
+    }
+    if (co_vector_a->compare_function != co_vector_b->compare_function){
+        return CO_CMP_ERR;
+    }
+    if (co_vector_a->length != co_vector_b->length){
+        return CO_CMP_NE;
+    }
+    for (size_t i = 0; i < co_vector_a->length; i++){
+        const void *object_a = (const void *) ((const char *)co_vector_a->raw_data + ((co_vector_a->begin_item_shift + i) * co_vector_a->item_size));
+        const void *object_b = (const void *) ((const char *)co_vector_b->raw_data + ((co_vector_b->begin_item_shift + i) * co_vector_b->item_size));
+        if (co_vector_a->compare_function(object_a, object_b) != CO_CMP_EQ) return CO_CMP_NE;
+    }
+    return CO_CMP_EQ;
+}
+
 CO_CLEAR(co_vector)
 {
     if (co_vector_obj == NULL){

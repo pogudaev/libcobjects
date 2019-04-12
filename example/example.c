@@ -75,6 +75,8 @@ int main(void)
     co_vector *vector = co_vector_create();
     co_vector_set_type(vector, co_string);
 
+    printf("size = %lu\n", co_vector_size(vector));
+
 
     for (int i = 0; i < 100; i++){
         char buff[30];
@@ -88,12 +90,19 @@ int main(void)
         }
     }
 
+    co_vector *vec = co_vector_clone(vector);
+
+    co_vector_move_front(vec, co_string_create_from_c_str("*"));
+
+    printf("CMP: %d\n", co_vector_compare(vec, vector));
+
+
     do{
-        const co_string *co_str = (const co_string *) co_vector_back(vector);
+        const co_string *co_str = (const co_string *) co_vector_back(vec);
         if (co_str)
             printf("%s\n", co_str->c_str);
     }
-    while(co_vector_pop_back(vector) != CO_IMPOSIBLE_OPERATION_ERR);
+    while(co_vector_pop_back(vec) != CO_IMPOSIBLE_OPERATION_ERR);
 
 	return 0;
 }
