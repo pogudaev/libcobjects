@@ -135,7 +135,7 @@ CO_COMPARE(co_buffer){
     }
     size_t compare_length = (co_buffer_a->length < co_buffer_b->length)?co_buffer_a->length:co_buffer_b->length;
     int compare_result = memcmp(co_buffer_a->data, co_buffer_b->data, compare_length);
-    if (compare_result == 0){
+    if (compare_result == CO_CMP_EQ){
         if (co_buffer_a->length < co_buffer_b->length) compare_result = CO_CMP_LT;
         else if (co_buffer_a->length > co_buffer_b->length) compare_result = CO_CMP_GT;
     }
