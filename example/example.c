@@ -3,6 +3,9 @@
 #include "co_list.h"
 #include "co_map.h"
 #include "co_vector.h"
+#include "co_ipv4.h"
+
+#include <arpa/inet.h>
 
 int main(void)
 {
@@ -70,8 +73,6 @@ int main(void)
 
     printf("%s\n", str2->c_str);
 
-    printf("----------------------------\n");
-
     co_vector *vector = co_vector_create();
     co_vector_set_type(vector, co_string);
 
@@ -103,6 +104,24 @@ int main(void)
             printf("%s\n", co_str->c_str);
     }
     while(co_vector_pop_back(vec) != CO_IMPOSIBLE_OPERATION_ERR);
+
+    printf("----------------------------\n");
+
+    co_ipv4 *co_ipv4_obj = co_ipv4_create_from_c_str("192.168.0.1");
+
+    printf("%x\n", co_ipv4_obj->addr);
+
+    co_ipv4_free(co_ipv4_obj);
+
+    uint32_t addr = inet_addr("192.168.0.1");
+    printf("%x\n", addr);
+
+    co_ipv4 *co_ipv4_mask = co_ipv4_create_from_c_str("255.240.0.0");
+
+    printf("%d\n", co_ipv4_is_valid_mask(co_ipv4_mask));
+
+    co_ipv4_free(co_ipv4_mask);
+
 
 	return 0;
 }

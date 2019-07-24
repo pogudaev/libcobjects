@@ -29,10 +29,15 @@ freely, subject to the following restrictions:
 #include "co_macros.h"
 #include <stdint.h>
 
+
 CO_OBJECT_DEFINITION(co_ipv4);
 
 struct co_ipv4{
     uint32_t addr;
 };
+
+co_ipv4 *co_ipv4_create_from_c_str(const char *str);
+co_status co_ipv4_apply_mask(co_ipv4 *co_ipv4_obj, const co_ipv4 *co_ipv4_mask);
+co_status co_ipv4_is_valid_mask(const co_ipv4 *co_ipv4_mask);
 
 #endif // CO_IPV4_H

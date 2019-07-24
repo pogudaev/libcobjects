@@ -24,6 +24,8 @@ freely, subject to the following restrictions:
 
 #include "co_ipv4.h"
 #include <stdlib.h>
+#include <string.h>
+#include <netinet/in.h>
 
 CO_CREATE(co_ipv4)
 {
@@ -77,4 +79,42 @@ CO_COMPARE(co_ipv4)
     else return CO_CMP_NE;
 }
 
+co_ipv4 *co_ipv4_create_from_c_str(const char *str)
+{
+    if (!str) return NULL;
+    co_ipv4 *co_ipv4_obj = NULL;
+    uint32_t addr = 0;
+    uint8_t *ptr = (uint8_t *)(&addr);
+    char end;
+    if (sscanf(str, "%d.%d.%d.%d%c", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &end) == 4){
+        co_ipv4_obj = (co_ipv4 *) calloc(sizeof(co_ipv4), 1);
+        if (co_ipv4_obj){
+            co_ipv4_obj->addr = addr;
+        }
+    }
+    return co_ipv4_obj;
+}
 
+co_status co_ipv4_apply_mask(co_ipv4 *co_ipv4_obj, const co_ipv4 *co_ipv4_mask)
+{
+    if (!co_ipv4_obj || !co_ipv4_mask){
+        return CO_BAD_ARG_ERR;
+    }
+    co_ipv4_obj->addr = co_ipv4_obj->addr & co_ipv4_mask->addr;
+    return CO_OK;
+}
+
+//TODO byte order
+co_status co_ipv4_is_valid_mask(const co_ipv4 *co_ipv4_mask)
+{
+    if (!co_ipv4_mask){
+        return CO_BAD_ARG_ERR;
+    }
+    uint32_t slot = 0x80000000;
+    uint32_t test = htonl(co_ipv4_mask->addr);
+    while(test & slot){
+        test <<= 1;
+    }
+    if (test == 0) return CO_OK;
+    return CO_CHECK_FAIL;
+}

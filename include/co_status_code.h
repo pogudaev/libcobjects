@@ -31,9 +31,10 @@ extern "C" {
 
 typedef enum{
     CO_OK = 0,
-    CO_MEM_ALLOC_ERR = -1,
-    CO_BAD_ARG_ERR = -2,
-    CO_IMPOSIBLE_OPERATION_ERR = -3,
+    CO_CHECK_FAIL = -1,
+    CO_MEM_ALLOC_ERR = -2,
+    CO_BAD_ARG_ERR = -3,
+    CO_IMPOSIBLE_OPERATION_ERR = -4,
     //...
     CO_UNKNOWN_ERR = -255
 } co_status;
