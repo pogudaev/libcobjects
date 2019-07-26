@@ -4,7 +4,7 @@
 #include "co_map.h"
 #include "co_vector.h"
 #include "co_ipv4.h"
-
+#include "co_converter.h"
 #include <arpa/inet.h>
 
 int main(void)
@@ -121,6 +121,16 @@ int main(void)
     printf("%d\n", co_ipv4_is_valid_mask(co_ipv4_mask));
 
     co_ipv4_free(co_ipv4_mask);
+
+    co_ipv4 *co_ipv4_obj2 = co_ipv4_create_from_c_str("192.168.0.1");
+
+    co_string *string = co_string_create();
+
+    co_ipv4_copy_to_co_string(string, co_ipv4_obj2);
+
+    printf("%s\n", string->c_str);
+
+
 
 
 	return 0;

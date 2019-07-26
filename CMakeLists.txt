@@ -22,6 +22,7 @@ set(SOURCE_LIB
         "${CMAKE_SOURCE_DIR}/src/co_map.c"
         "${CMAKE_SOURCE_DIR}/src/co_vector.c"
         "${CMAKE_SOURCE_DIR}/src/co_ipv4.c"
+        "${CMAKE_SOURCE_DIR}/src/co_converter.c"
 )
 
 set(PUBLIC_HEADERS 
@@ -34,6 +35,7 @@ set(PUBLIC_HEADERS
         "${CMAKE_SOURCE_DIR}/include/co_map.h"
         "${CMAKE_SOURCE_DIR}/include/co_vector.h"
         "${CMAKE_SOURCE_DIR}/include/co_ipv4.h"
+        "${CMAKE_SOURCE_DIR}/include/co_converter.h"
 )
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/include)
