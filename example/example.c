@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "co_string.h"
 #include "co_list.h"
+#include "co_dlist.h"
 #include "co_map.h"
 #include "co_vector.h"
 #include "co_ipv4.h"
@@ -131,7 +132,27 @@ int main(void)
     printf("%s\n", string->c_str);
 
 
+	printf("----------------------------\n");
 
+	co_dlist *co_dlist_obj = co_dlist_create();
+	co_dlist_set_type(co_dlist_obj, int);
+
+	for (int i = 0; i < 10; i++){
+		co_dlist_push_back(co_dlist_obj, &i);
+	}
+
+	co_dlist_foreach(co_dlist_obj, iter) {
+		printf("%d\n", * (int *) iter->data);
+	}
+
+	printf("----------------------------\n");
+
+	co_string *str4 = co_string_create();
+	co_string_set(str4, "qwer; wsdf; rtyg; sads; rtrg; sdfa");
+	co_dlist *co_dlist_s = co_string_split_to_dlist(str4, "; ");
+	co_dlist_foreach(co_dlist_s, iter) {
+		printf("%s\n",  ((co_string *) iter->data)->c_str);
+	}
 
 	return 0;
 }
