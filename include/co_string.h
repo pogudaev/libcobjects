@@ -35,10 +35,10 @@ extern "C" {
 
 CO_OBJECT_DEFINITION(co_string);
 
-struct co_string{
-    char *c_str;
-    size_t length;
-    size_t alloc_length;
+struct co_string {
+	char *c_str;
+	size_t length;
+	size_t alloc_length;
 };
 
 co_string *co_string_create_from_c_str(const char *str);

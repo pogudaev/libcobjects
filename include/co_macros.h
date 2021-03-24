@@ -38,7 +38,7 @@ extern "C" {
 //для примитивных типов
 
 typedef void (*co_free_function)(void *);
-typedef void * (*co_clone_function)(const void *);
+typedef void *(*co_clone_function)(const void *);
 typedef int (*co_compare_function)(const void *, const void *);
 
 #define CO_PRIMITIVE_CLONE_DEF(Primitive) \

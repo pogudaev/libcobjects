@@ -35,10 +35,10 @@ extern "C" {
 
 CO_OBJECT_DEFINITION(co_buffer);
 
-struct co_buffer{
-    void *data;
-    size_t length;
-    size_t alloc_length;
+struct co_buffer {
+	void *data;
+	size_t length;
+	size_t alloc_length;
 };
 
 co_buffer *co_buffer_create_and_alloc(size_t alloc_length);

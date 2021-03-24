@@ -38,19 +38,19 @@ CO_CONTAINER_DEFINITION(co_map);
 
 struct co_map_node;
 typedef struct co_map_node co_map_node;
-typedef co_map_node * co_map_iterator;
+typedef co_map_node *co_map_iterator;
 
-struct co_map_node{
-    char *key;
-    void *data;
-    co_map_iterator next;
+struct co_map_node {
+	char *key;
+	void *data;
+	co_map_iterator next;
 };
 
 struct co_map {
-    co_map_iterator head;
-    co_free_function free_function; //Функция для удаления элемента
-    co_clone_function clone_function; //Функция для клонирования элемента
-    co_compare_function compare_function; //Функция для сравнения элементов
+	co_map_iterator head;
+	co_free_function free_function; //Функция для удаления элемента
+	co_clone_function clone_function; //Функция для клонирования элемента
+	co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_map_set_type(map, object) \

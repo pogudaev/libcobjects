@@ -38,21 +38,21 @@ extern "C" {
 
 struct co_list_node;
 typedef struct co_list_node co_list_node; //элемент связного списка
-typedef co_list_node * co_list_iterator; //указатель на элемент связного списка
-struct co_list_node{
-    void *data; //указатель на данные
-    co_list_iterator next; //следущий элемент списка
+typedef co_list_node *co_list_iterator;  //указатель на элемент связного списка
+struct co_list_node {
+	void *data; //указатель на данные
+	co_list_iterator next; //следущий элемент списка
 };
 
 CO_OBJECT_DEFINITION(co_list);
 CO_CONTAINER_DEFINITION(co_list);
 CO_LINEAR_CONTAINER_DEFINITION(co_list);
 
-struct co_list{
-    co_list_iterator head; //начало списка
-    co_free_function free_function; //Функция для удаления элемента
-    co_clone_function clone_function; //Функция для клонирования элемента
-    co_compare_function compare_function; //Функция для сравнения элементов
+struct co_list {
+	co_list_iterator head; //начало списка
+	co_free_function free_function; //Функция для удаления элемента
+	co_clone_function clone_function; //Функция для клонирования элемента
+	co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_list_set_type(list, object) \

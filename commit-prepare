@@ -1,0 +1,11 @@
+#!/bin/sh
+
+astyle --break-blocks --style=linux --indent=tab --pad-oper --pad-header --align-pointer=name --align-reference=name --indent-switches --mode=c --indent-col1-comments --add-brackets --indent-col1-comments `find -name '*.c'`
+astyle --break-blocks --style=linux --indent=tab --pad-oper --pad-header --align-pointer=name --align-reference=name --indent-switches --mode=c --indent-col1-comments --add-brackets --indent-col1-comments `find -name '*.h'`
+rm -rfv `find -name '*.orig'`
+
+
+
+
+
+

@@ -38,11 +38,11 @@ extern "C" {
 
 struct co_dlist_node;
 typedef struct co_dlist_node co_dlist_node; //элемент связного списка
-typedef co_dlist_node * co_dlist_iterator; //указатель на элемент связного списка
-struct co_dlist_node{
-    void *data; //указатель на данные
-    co_dlist_iterator next; //следущий элемент списка
-    co_dlist_iterator prev; //предыдущий элемент списка
+typedef co_dlist_node *co_dlist_iterator;  //указатель на элемент связного списка
+struct co_dlist_node {
+	void *data; //указатель на данные
+	co_dlist_iterator next; //следущий элемент списка
+	co_dlist_iterator prev; //предыдущий элемент списка
 };
 
 CO_OBJECT_DEFINITION(co_dlist);
@@ -50,11 +50,11 @@ CO_CONTAINER_DEFINITION(co_dlist);
 CO_LINEAR_CONTAINER_DEFINITION(co_dlist);
 
 struct co_dlist {
-    co_dlist_iterator head; //начало списка
-    co_dlist_iterator tail; //конец списка
-    co_free_function free_function; //Функция для удаления элемента
-    co_clone_function clone_function; //Функция для клонирования элемента
-    co_compare_function compare_function; //Функция для сравнения элементов
+	co_dlist_iterator head; //начало списка
+	co_dlist_iterator tail; //конец списка
+	co_free_function free_function; //Функция для удаления элемента
+	co_clone_function clone_function; //Функция для клонирования элемента
+	co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_dlist_set_type(dlist, object) \

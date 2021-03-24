@@ -40,15 +40,15 @@ CO_OBJECT_DEFINITION(co_vector);
 CO_CONTAINER_DEFINITION(co_vector);
 CO_LINEAR_CONTAINER_DEFINITION(co_vector);
 
-struct co_vector{
-    void *raw_data;
-    size_t raw_data_size;
-    size_t begin_item_shift;
-    size_t item_size;
-    size_t length;
-    co_free_function free_function; //Функция для удаления элемента
-    co_clone_function clone_function; //Функция для клонирования элемента
-    co_compare_function compare_function; //Функция для сравнения элементов
+struct co_vector {
+	void *raw_data;
+	size_t raw_data_size;
+	size_t begin_item_shift;
+	size_t item_size;
+	size_t length;
+	co_free_function free_function; //Функция для удаления элемента
+	co_clone_function clone_function; //Функция для клонирования элемента
+	co_compare_function compare_function; //Функция для сравнения элементов
 };
 
 #define co_vector_set_type(vector, object) \

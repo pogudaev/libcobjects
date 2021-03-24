@@ -32,8 +32,8 @@ freely, subject to the following restrictions:
 
 CO_OBJECT_DEFINITION(co_ipv4);
 
-struct co_ipv4{
-    uint32_t addr;
+struct co_ipv4 {
+	uint32_t addr;
 };
 
 co_ipv4 *co_ipv4_create_from_c_str(const char *str);

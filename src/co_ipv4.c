@@ -29,92 +29,114 @@ freely, subject to the following restrictions:
 
 CO_CREATE(co_ipv4)
 {
-    co_ipv4 *co_ipv4_obj = (co_ipv4 *) calloc(sizeof(co_ipv4), 1);
-    return co_ipv4_obj;
+	co_ipv4 *co_ipv4_obj = (co_ipv4 *) calloc(sizeof(co_ipv4), 1);
+	return co_ipv4_obj;
 }
 
 CO_FREE(co_ipv4)
 {
-    if (co_ipv4_obj){
-        free(co_ipv4_obj);
-    }
+	if (co_ipv4_obj) {
+		free(co_ipv4_obj);
+	}
 }
 
 CO_CLONE(co_ipv4)
 {
-    if (!co_ipv4_src){
-        return NULL;
-    }
-    co_ipv4 *co_ipv4_obj = (co_ipv4 *) malloc(sizeof(co_ipv4));
-    if (co_ipv4_obj){
-        co_ipv4_obj->addr = co_ipv4_src->addr;
-    }
-    return co_ipv4_obj;
+	if (!co_ipv4_src) {
+		return NULL;
+	}
+
+	co_ipv4 *co_ipv4_obj = (co_ipv4 *) malloc(sizeof(co_ipv4));
+
+	if (co_ipv4_obj) {
+		co_ipv4_obj->addr = co_ipv4_src->addr;
+	}
+
+	return co_ipv4_obj;
 }
 
 CO_COPY(co_ipv4)
 {
-    if (!co_ipv4_dst || !co_ipv4_src){
-        return CO_BAD_ARG_ERR;
-    }
-    co_ipv4_dst->addr = co_ipv4_src->addr;
-    return CO_OK;
+	if (!co_ipv4_dst || !co_ipv4_src) {
+		return CO_BAD_ARG_ERR;
+	}
+
+	co_ipv4_dst->addr = co_ipv4_src->addr;
+	return CO_OK;
 }
 
 CO_RESET(co_ipv4)
 {
-    if (!co_ipv4_obj){
-        return CO_BAD_ARG_ERR;
-    }
-    co_ipv4_obj->addr = 0;
-    return CO_OK;
+	if (!co_ipv4_obj) {
+		return CO_BAD_ARG_ERR;
+	}
+
+	co_ipv4_obj->addr = 0;
+	return CO_OK;
 }
 
 CO_COMPARE(co_ipv4)
 {
-    if (!co_ipv4_a || !co_ipv4_b){
-        return CO_CMP_ERR;
-    }
-    if (co_ipv4_a->addr == co_ipv4_b->addr) return CO_CMP_EQ;
-    else return CO_CMP_NE;
+	if (!co_ipv4_a || !co_ipv4_b) {
+		return CO_CMP_ERR;
+	}
+
+	if (co_ipv4_a->addr == co_ipv4_b->addr) {
+		return CO_CMP_EQ;
+	} else {
+		return CO_CMP_NE;
+	}
 }
 
 co_ipv4 *co_ipv4_create_from_c_str(const char *str)
 {
-    if (!str) return NULL;
-    co_ipv4 *co_ipv4_obj = NULL;
-    uint32_t addr = 0;
-    uint8_t *ptr = (uint8_t *)(&addr);
-    char end;
-    if (sscanf(str, "%d.%d.%d.%d%c", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &end) == 4){
-        co_ipv4_obj = (co_ipv4 *) calloc(sizeof(co_ipv4), 1);
-        if (co_ipv4_obj){
-            co_ipv4_obj->addr = addr;
-        }
-    }
-    return co_ipv4_obj;
+	if (!str) {
+		return NULL;
+	}
+
+	co_ipv4 *co_ipv4_obj = NULL;
+	uint32_t addr = 0;
+	uint8_t *ptr = (uint8_t *)(&addr);
+	char end;
+
+	if (sscanf(str, "%d.%d.%d.%d%c", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &end) == 4) {
+		co_ipv4_obj = (co_ipv4 *) calloc(sizeof(co_ipv4), 1);
+
+		if (co_ipv4_obj) {
+			co_ipv4_obj->addr = addr;
+		}
+	}
+
+	return co_ipv4_obj;
 }
 
 co_status co_ipv4_apply_mask(co_ipv4 *co_ipv4_obj, const co_ipv4 *co_ipv4_mask)
 {
-    if (!co_ipv4_obj || !co_ipv4_mask){
-        return CO_BAD_ARG_ERR;
-    }
-    co_ipv4_obj->addr = co_ipv4_obj->addr & co_ipv4_mask->addr;
-    return CO_OK;
+	if (!co_ipv4_obj || !co_ipv4_mask) {
+		return CO_BAD_ARG_ERR;
+	}
+
+	co_ipv4_obj->addr = co_ipv4_obj->addr & co_ipv4_mask->addr;
+	return CO_OK;
 }
 
 //TODO byte order
 co_status co_ipv4_is_valid_mask(const co_ipv4 *co_ipv4_mask)
 {
-    if (!co_ipv4_mask){
-        return CO_BAD_ARG_ERR;
-    }
-    uint32_t slot = 0x80000000;
-    uint32_t test = htonl(co_ipv4_mask->addr);
-    while(test & slot){
-        test <<= 1;
-    }
-    if (test == 0) return CO_OK;
-    return CO_CHECK_FAIL;
+	if (!co_ipv4_mask) {
+		return CO_BAD_ARG_ERR;
+	}
+
+	uint32_t slot = 0x80000000;
+	uint32_t test = htonl(co_ipv4_mask->addr);
+
+	while (test & slot) {
+		test <<= 1;
+	}
+
+	if (test == 0) {
+		return CO_OK;
+	}
+
+	return CO_CHECK_FAIL;
 }
