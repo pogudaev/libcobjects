@@ -61,9 +61,7 @@ if (BUILD_STATIC_LIBS OR BUILD_SHARED_LIBS)
 		set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${LIB_VERSION_STRING} SOVERSION ${LIB_VERSION_MAJOR})
 	endif (BUILD_SHARED_LIBS)
 
-
-	add_subdirectory(test)
-        add_subdirectory(example)
+    add_subdirectory(example)
 	install(FILES ${PUBLIC_HEADERS} DESTINATION include/cobjects)
 
 else (BUILD_STATIC_LIBS OR BUILD_SHARED_LIBS)
@@ -74,4 +72,14 @@ endif (BUILD_STATIC_LIBS OR BUILD_SHARED_LIBS)
 
 
 
+# Включить поддержку тестирования:
+enable_testing()
+add_executable (co_buffer_test ${SOURCE_LIB} "${CMAKE_SOURCE_DIR}/test/co_buffer_test.c")
 
+add_test(co_buffer_create_free_test co_buffer_test co_buffer_create_free_test)
+add_test(co_buffer_set_test co_buffer_test co_buffer_set_test)
+add_test(co_buffer_add_test co_buffer_test co_buffer_add_test)
+add_test(co_buffer_get_test co_buffer_test co_buffer_get_test)
+
+
+#add_test(Test TestFail 0)
