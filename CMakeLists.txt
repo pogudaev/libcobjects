@@ -70,16 +70,20 @@ else (BUILD_STATIC_LIBS OR BUILD_SHARED_LIBS)
 
 endif (BUILD_STATIC_LIBS OR BUILD_SHARED_LIBS)
 
-
-
 # Включить поддержку тестирования:
 enable_testing()
 add_executable (co_buffer_test ${SOURCE_LIB} "${CMAKE_SOURCE_DIR}/test/co_buffer_test.c")
 
-add_test(co_buffer_create_free_test co_buffer_test co_buffer_create_free_test)
+add_test(co_buffer_create_test co_buffer_test co_buffer_create_test)
+add_test(co_buffer_free_test co_buffer_test co_buffer_free_test)
 add_test(co_buffer_set_test co_buffer_test co_buffer_set_test)
 add_test(co_buffer_add_test co_buffer_test co_buffer_add_test)
 add_test(co_buffer_get_test co_buffer_test co_buffer_get_test)
-
-
-#add_test(Test TestFail 0)
+add_test(co_buffer_clone_test co_buffer_test co_buffer_clone_test)
+add_test(co_buffer_copy_test co_buffer_test co_buffer_copy_test)
+add_test(co_buffer_reset_test co_buffer_test co_buffer_reset_test)
+add_test(co_buffer_compare_test co_buffer_test co_buffer_compare_test)
+add_test(co_buffer_realloc_test co_buffer_test co_buffer_realloc_test)
+add_test(co_buffer_set_alloc_length_test co_buffer_test co_buffer_set_alloc_length_test)
+add_test(co_buffer_create_and_alloc_test co_buffer_test co_buffer_create_and_alloc_test)
+add_test(co_buffer_append_test co_buffer_test co_buffer_append_test)

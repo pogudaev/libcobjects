@@ -36,6 +36,11 @@ static co_status _co_buffer_realloc(co_buffer *co_buffer, size_t alloc_length)
 
 	co_buffer->data = new_data;
 	co_buffer->alloc_length = alloc_length;
+
+	if (co_buffer->length > alloc_length) {
+		co_buffer->length = alloc_length;
+	}
+
 	return CO_OK;
 }
 
@@ -50,6 +55,7 @@ static co_status _co_buffer_set_alloc_length(co_buffer *co_buffer, size_t alloc_
 	free(co_buffer->data);
 	co_buffer->data = new_data;
 	co_buffer->alloc_length = alloc_length;
+	co_buffer->length = 0;
 	return CO_OK;
 }
 
@@ -68,12 +74,12 @@ static co_status _co_buffer_add(co_buffer *co_buffer_obj, const void *data, size
 	return CO_OK;
 }
 
-CO_CREATE(co_buffer)
+CO_CREATE(co_buffer) //Tested
 {
 	return co_buffer_create_and_alloc(0);
 }
 
-CO_FREE(co_buffer)
+CO_FREE(co_buffer) //Tested
 {
 	if (co_buffer_obj) {
 		if (co_buffer_obj->data) {
@@ -84,7 +90,7 @@ CO_FREE(co_buffer)
 	}
 }
 
-CO_CLONE(co_buffer)
+CO_CLONE(co_buffer) //Tested
 {
 	if (!co_buffer_src) {
 		return NULL;
@@ -108,7 +114,7 @@ CO_CLONE(co_buffer)
 	return co_buffer_obj;
 }
 
-CO_COPY(co_buffer)
+CO_COPY(co_buffer) //Tested
 {
 	if (!co_buffer_src || !co_buffer_dst) {
 		return CO_BAD_ARG_ERR;
@@ -128,7 +134,7 @@ CO_COPY(co_buffer)
 	return CO_OK;
 }
 
-CO_RESET(co_buffer)
+CO_RESET(co_buffer) //Tested
 {
 	if (co_buffer_obj == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -147,14 +153,22 @@ CO_RESET(co_buffer)
 	return CO_OK;
 }
 
-CO_COMPARE(co_buffer)
+CO_COMPARE(co_buffer) //Tested
 {
 	if (co_buffer_a == NULL || co_buffer_b == NULL) {
-		return CO_CMP_ERR;
+		return CO_BAD_ARG_ERR;
 	}
 
 	size_t compare_length = (co_buffer_a->length < co_buffer_b->length) ? co_buffer_a->length : co_buffer_b->length;
 	int compare_result = memcmp(co_buffer_a->data, co_buffer_b->data, compare_length);
+
+	if (compare_result < 0) {
+		compare_result = CO_CMP_LT;
+	}
+
+	if (compare_result > 0) {
+		compare_result = CO_CMP_GT;
+	}
 
 	if (compare_result == CO_CMP_EQ) {
 		if (co_buffer_a->length < co_buffer_b->length) {
@@ -167,7 +181,7 @@ CO_COMPARE(co_buffer)
 	return compare_result;
 }
 
-co_status co_buffer_realloc(co_buffer *co_buffer_obj, size_t alloc_length)
+co_status co_buffer_realloc(co_buffer *co_buffer_obj, size_t alloc_length) //Tested
 {
 	if (co_buffer_obj == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -176,7 +190,7 @@ co_status co_buffer_realloc(co_buffer *co_buffer_obj, size_t alloc_length)
 	return _co_buffer_realloc(co_buffer_obj, alloc_length);
 }
 
-co_status co_buffer_set_alloc_length(co_buffer *co_buffer_obj, size_t alloc_length)
+co_status co_buffer_set_alloc_length(co_buffer *co_buffer_obj, size_t alloc_length) //Tested
 {
 	if (co_buffer_obj == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -185,7 +199,7 @@ co_status co_buffer_set_alloc_length(co_buffer *co_buffer_obj, size_t alloc_leng
 	return _co_buffer_set_alloc_length(co_buffer_obj, alloc_length);
 }
 
-co_status co_buffer_set(co_buffer *co_buffer_obj, const void *data, size_t length)
+co_status co_buffer_set(co_buffer *co_buffer_obj, const void *data, size_t length) //Tested
 {
 	if (co_buffer_obj == NULL || data == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -204,7 +218,7 @@ co_status co_buffer_set(co_buffer *co_buffer_obj, const void *data, size_t lengt
 	return CO_OK;
 }
 
-co_status co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t length)
+co_status co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t length) //Tested
 {
 	if (co_buffer_obj == NULL || data == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -213,7 +227,7 @@ co_status co_buffer_add(co_buffer *co_buffer_obj, const void *data, size_t lengt
 	return _co_buffer_add(co_buffer_obj, data, length);
 }
 
-co_status co_buffer_get(co_buffer *co_buffer_obj, void **data, size_t *length)
+co_status co_buffer_get(co_buffer *co_buffer_obj, void **data, size_t *length) //Tested
 {
 	if (co_buffer_obj == NULL || data == NULL || length == NULL) {
 		return CO_BAD_ARG_ERR;
@@ -231,7 +245,7 @@ co_status co_buffer_get(co_buffer *co_buffer_obj, void **data, size_t *length)
 	return CO_OK;
 }
 
-co_buffer *co_buffer_create_and_alloc(size_t alloc_length)
+co_buffer *co_buffer_create_and_alloc(size_t alloc_length) //Tested
 {
 	co_buffer *co_buffer_obj = (co_buffer *) malloc(sizeof(co_buffer));
 
@@ -250,7 +264,7 @@ co_buffer *co_buffer_create_and_alloc(size_t alloc_length)
 	return co_buffer_obj;
 }
 
-co_status co_buffer_append(co_buffer *co_buffer_obj, const co_buffer *co_buffer_src)
+co_status co_buffer_append(co_buffer *co_buffer_obj, const co_buffer *co_buffer_src) //Tested
 {
 	if (co_buffer_obj == NULL || co_buffer_src == NULL) {
 		return CO_BAD_ARG_ERR;
